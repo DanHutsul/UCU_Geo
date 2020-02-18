@@ -14,6 +14,7 @@ cities = city_data['city_ascii']
 lt = city_data['lat']
 ln = city_data['lng']
 
+
 def main():
     """
     Main code part
@@ -104,7 +105,8 @@ def locator(name):
 
 def difference(user_lt, user_ln, lt, ln):
     """int, int, int, int -> int
-    Finds the summarical difference of inputted coordinates and city`s coordinates
+    Finds the summarical difference of inputted coordinates\
+    and city`s coordinates
     >>> difference(1.00, 1.00, 1.00, 1.00)
     0.0
     """
