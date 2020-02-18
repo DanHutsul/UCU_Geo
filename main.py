@@ -1,20 +1,23 @@
 import folium
 import pandas as pd
 
-data = pd.read_csv('D:/Da/UCU/OP_2020/19.02/locations.csv',
+data = pd.read_csv('locations.csv',
                    error_bad_lines=False)
 movies = data['movie']
 years = data['year']
 add_info = data['add_info']
 location = data['location']
 
+city_data = pd.read_csv('worldcities.csv',
+                        error_bad_lines=False)
+cities = city_data['city_ascii']
+lt = city_data['lat']
+ln = city_data['lng']
 
 def main():
     """
     Main code part
     """
-    print("Warning! Geopy method can have errors due to the\
-           strain on the server")
     year = input("Please enter a year you would like to have a map for: ")
     coord = input("Please enter your location (format: lat, long): ")
     user_lt = coord.split(", ")[0]
@@ -27,34 +30,35 @@ def main():
     locations = []
     i = 0
     while len(locations) <= 10:
-        try:
-            coords = locator(location[i])
-            print(coords)
-            lt = coords[0]
-            ln = coords[1]
-            dif = difference(user_lt, user_ln, lt, ln)
-            if years[i] == year:
-                locations.append((dif, i, lt, ln))
-            i += 1
-        except:
-            pass
+        if years[i] == year:
+            try:
+                if years[i] == year:
+                    coords = locator(location[i])
+                    lt = coords[0]
+                    ln = coords[1]
+                    dif = difference(user_lt, user_ln, lt, ln)
+                    locations.append((dif, i, lt, ln))
+            except:
+                pass
+        i += 1
     # Sort by increasing
     z = i
-    try:
-        for i in range(z, 1000):
+    # The amount below can be changed
+    for i in range(z, 30000):
+        try:
             locations.sort()
-            coords = locator(location[i])
-            print(coords)
-            lt = coords[0]
-            ln = coords[1]
-            dif = difference(user_lt, user_ln, lt, ln)
-            old_dif = locations[9][0]
-            if dif < old_dif:
-                locations[9] = (dif, i, lt, ln)
-    except:
-        pass
+            if years[i] == year:
+                coords = locator(location[i])
+                lt = coords[0]
+                ln = coords[1]
+                dif = difference(user_lt, user_ln, lt, ln)
+                old_dif = locations[9][0]
+                if dif < old_dif:
+                    locations[9] = (dif, i, lt, ln)
+        except:
+            pass
 
-    map = folium.Map(location=[48.314775, 25.082925],
+    map = folium.Map(location=[user_lt, user_ln],
                      zoom_start=10)
 
     films = folium.FeatureGroup(name="Films")
@@ -66,14 +70,14 @@ def main():
         name = movies[index]
         info = add_info[index]
         films.add_child(folium.CircleMarker(location=[lt, ln],
-                                            radius=11,
+                                            radius=20,
                                             popup=name + "\n",
                                             fill_color='red',
                                             color='red',
                                             fill_opacity=0.5))
 
         infos.add_child(folium.CircleMarker(location=[lt, ln],
-                                            radius=10,
+                                            radius=18,
                                             popup=info + "\n",
                                             fill_color='white',
                                             color='white',
@@ -91,18 +95,11 @@ def locator(name):
     """ str -> tuple
     Finds the latitude and longtitude of the location
     >>> locator("London")
-    (51.5074, 0.1278)
+    (51.5000, -0.1167)
     """
-    from geopy.geocoders import Nominatim
-    geolocator = Nominatim(user_agent="specify_your_app_name_here")
-    from geopy.extra.rate_limiter import RateLimiter
-    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1,
-                          max_retries=20)
-    # Error occurs below
-    location = geocode(name, timeout=None)
-    lt = location.latitude
-    ln = location.longitude
-    return (lt, ln)
+    for x in range(15490):
+        if cities[x] in name:
+            return(lt[x], ln[x])
 
 
 def difference(user_lt, user_ln, lt, ln):
