@@ -1,4 +1,3 @@
-<b></b>
 # Description
 Module shows user the closest places where films were shot
 <p>Requires Pandas and Folium libraries</p>
