@@ -1,7 +1,7 @@
-<b></b>
+<h2></h2>
 # Description
 Module shows user the closest places where films were shot
-Requires Pandas and Folium libraries
+<p>Requires Pandas and Folium libraries</p>
 # Note
 For time constraints only 30000 films are used
 # HTML
